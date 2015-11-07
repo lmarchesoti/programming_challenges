@@ -1,6 +1,7 @@
+#include <cstdio>
 #include <string>
-#include <iostream>
 #define DECKSIZE 53
+#define BUFLEN 4
 
 using namespace std;
 
@@ -28,38 +29,40 @@ string suit(int);
 
 int main(){
 
+	char s[BUFLEN]; // temporary input string
 	int t; // number of test cases
 	int n; // number of known shuffles
 	int shuffle; // current shuffle to apply
 	int deck; // currently used deck
 	bool first = true; // first testcase flag
 
-	cin >> t; // read number of test cases
+	// read number of test cases
+	scanf("%d", &t);
 
 	// for each test case
 	for(; t > 0; --t){
 
 		if(first) first = false;
-		else cout << endl;
+		else printf("\n");
 
 		// init decks
 		deck = 0; // currently used deck
 		for(int i = 0; i < 2; ++i)
 			for(int j = 0; j < DECKSIZE; ++j) decks[i][j] = j;
 
-		cin >> n; // read number of shuffles
+		scanf("%d", &n); // read number of shuffles
 
 		// read shuffles in
 		for(int i = 1; i <= n; ++i)
 			for(int j = 1; j < DECKSIZE; ++j)
-				cin >> shuffles[i][j];
+				scanf("%d", &shuffles[i][j]);
 
-		cin >> ws; // remove trailing whitespaces
+		fgets(s, BUFLEN, stdin); // throw out remaining newline from scanf
 
 		// apply shuffles until next case
-		while((cin.peek() != '\n') && !cin.eof()){
+		while((fgets(s, BUFLEN, stdin) != NULL) && (s[0] != '\n')){
 
-			cin >> shuffle; cin.get();
+			sscanf(s, "%d", &shuffle);
 			shuffle_deck(decks[deck], decks[(deck+1)%2], shuffles[shuffle]);
 
 			deck = (deck+1)%2; // cyclic update current deck
@@ -84,7 +87,7 @@ void shuffle_deck(int *base, int *target, int *transform){
 void print_deck(int *base){
 
 	for(int i = 1; i < DECKSIZE; ++i)
-		cout << value(base[i]) << " of " << suit(base[i]) << endl;
+		printf("%s of %s\n", value(base[i]).c_str(), suit(base[i]).c_str());
 
 	return;
 }

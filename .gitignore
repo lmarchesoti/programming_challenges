@@ -1,4 +1,5 @@
 */prog
 */test
-*/output/*
+/*/output/*
+!/*/output/.placeholder
 */src/functions.cpp

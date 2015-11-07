@@ -39,8 +39,8 @@ int main(){
 
 			// set previous to current
 			prev = cur;
-
 		}
+
 		// print result
 		jolly = true;
 		for(int i = 1; i < n; ++i)
