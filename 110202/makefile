@@ -1,4 +1,4 @@
-PARAMS=-std=c++0x -lm
+PARAMS=-ggdb
 TARGET=prog
 TEST=test
 

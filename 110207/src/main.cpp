@@ -11,7 +11,7 @@ using namespace std;
 typedef struct s_contestant{
 
 	int team; // team code
-	int score; // number of score wrong
+	int score; // number of scored problems
 	int penalty; // penalty time
 	bool submitted; // flags participation
 	int wrong[NPROBLEMS]; // score log

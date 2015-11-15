@@ -19,12 +19,6 @@ int main(){
 	int parties; // number of political parties
 	int interval; // interval of attacks for current party
 	bitset<LIMIT> calendar; // record of announced hartals
-	bitset<LIMIT> valid; // mask of valid hartal days
-
-	// set every day except for fridays and saturdays as valid
-	valid.set();
-	for(int i = 6; i < LIMIT; i += 7) valid[i] = 0;
-	for(int i = 7; i < LIMIT; i += 7) valid[i] = 0;
 
 	cin >> t;
 
@@ -38,13 +32,15 @@ int main(){
 		// for each party
 		for(int i = 0; i < parties; ++i){
 
-			// read interval
 			cin >> interval;
 
 			// mark hartals on calendar
 			for(int day = interval; day <= days; day += interval)
-				calendar[day] = valid[day];
+				calendar[day] = 1;
 		}
+
+		// disconsider hartals on forbidden days
+		for(int i = 6; i < LIMIT; i += 7){ calendar[i] = 0; calendar[i + 1] = 0; }
 
 		// print number of hartals
 		cout << calendar.count() << endl;

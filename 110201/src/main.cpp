@@ -24,8 +24,7 @@ int main(){
 
 		set.reset(); // reset set
 
-		// read first item if any
-		scanf("%d", &prev);
+		scanf("%d", &prev); // read first item if any
 
 		// until sequence end
 		for(int i = 1; i < n; ++i){
@@ -34,19 +33,17 @@ int main(){
 			scanf("%d", &cur);
 			diff = abs(prev - cur);
 
-			// mark difference
-			if(!set.test(diff)) set[diff] = 1;
+			set[diff] = 1; // mark difference
 
-			// set previous to current
-			prev = cur;
+			prev = cur; // set previous to current
 		}
 
 		// print result
 		jolly = true;
-		for(int i = 1; i < n; ++i)
+		for(int i = 1; (i < n) && jolly; ++i)
 			if(!set.test(i)) jolly = false;
 
-		if(jolly || (n == 1)) printf("Jolly\n");
+		if(jolly) printf("Jolly\n");
 		else printf("Not jolly\n");
 	}
 
