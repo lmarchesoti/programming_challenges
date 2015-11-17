@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -10,11 +9,11 @@ using namespace std;
 /* data structures */
 typedef struct s_player{
 
-	int cards[5];
+	int cards[HAND_SIZE];
 	bool flush;
 	bool straight;
-	int freq[13]; // records frequency of each card
-	int same_val[5]; // records number of same-valued cards
+	int freq[NUM_CARDS]; // records frequency of each card
+	int same_val[HAND_SIZE]; // records number of same-valued cards
 	int type; // type of hand
 	vector<int> score; // scoring priority for comparison
 } PLAYER;
@@ -23,6 +22,8 @@ typedef struct s_player{
 PLAYER black, white;
 
 /* function prototypes */
+// fills target vector by reverse frequencies and values of cards found in hand
+void fill_by_rev_freq(int[NUM_CARDS], vector<int>*);
 
 // reads hand and initializes scoring structures of player
 void init_player(PLAYER*);
@@ -52,9 +53,7 @@ int main(){
 
 		// read and convert hands
 		init_player(&black);
-		scanf(" "); // each whitespace between hands
 		init_player(&white);
-		scanf("\n");
 
 		// rank each hand
 		rank_hand(&black);
@@ -62,9 +61,9 @@ int main(){
 
 		// compare and print results
 		cmp = compare(&black, &white);
-		if(cmp == 1) printf("Black wins.\n");
-		if(cmp == -1) printf("White wins.\n");
-		if(cmp == 0) printf("Tie.\n");
+		if(cmp == 1)  cout << "Black wins.\n";
+		if(cmp == -1) cout << "White wins.\n";
+		if(cmp == 0)  cout << "Tie.\n";
 
 	}
 
@@ -77,7 +76,7 @@ void init_player(PLAYER *p){
 		char v1, v2, v3, v4, v5; // temp card values
 		char s1, s2, s3, s4, s5; // temp card suits
 
-		scanf("%c%c %c%c %c%c %c%c %c%c", &v1, &s1, &v2, &s2, &v3, &s3, &v4, &s4, &v5, &s5);
+		cin >> v1 >> s1 >> v2 >> s2 >> v3 >> s3 >> v4 >> s4 >> v5 >> s5 >> ws;
 
 		p->flush = false;
 		// mark if all have the same suit
@@ -143,50 +142,26 @@ void rank_hand(PLAYER* p){
 	// fill score priorities
 	switch(p->type){
 
-		case 0:
-			for(int i = 0; i < HAND_SIZE; ++i)
-				p->score.push_back(p->cards[i]);
-			break;
+		case 0: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 1:
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 1) p->score.push_back(i);
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 2) p->score.push_back(i);
-			break;
+		case 1: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 2:
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 1) p->score.push_back(i);
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 2) p->score.push_back(i);
-			break;
+		case 2: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 3:
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 1) p->score.push_back(i);
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 3) p->score.push_back(i);
-			break;
+		case 3: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 4: p->score.push_back(p->cards[HAND_SIZE-1]); break;
+		case 4: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 5:
+		case 5: // doesn't take frequency into account
 			for(int i = 0; i < NUM_CARDS; ++i)
 				p->score.push_back(p->cards[i]);
 			break;
 
-		case 6:
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 3) p->score.push_back(i);
-			break;
+		case 6: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 7:
-			for(int i = 0; i < NUM_CARDS; ++i)
-				 if(p->freq[i] == 4) p->score.push_back(i);
-			break;
+		case 7: fill_by_rev_freq(p->freq, &(p->score)); break;
 
-		case 8: p->score.push_back(p->cards[HAND_SIZE-1]); break;
+		case 8: fill_by_rev_freq(p->freq, &(p->score)); break;
 
 		default: break;
 
@@ -198,13 +173,8 @@ void rank_hand(PLAYER* p){
 void extract_patterns(PLAYER *p){
 
 	// track straight
-	for(int i = 0; i < 4; ++i)
+	for(int i = 0; i < (HAND_SIZE - 1); ++i)
 		if((p->cards[i+1] - p->cards[i]) != 1) p->straight = false;
-
-/*
-	if(((p->cards[HAND_SIZE - 1] - p->cards[HAND_SIZE - 2]) != 1)
-			&& ((p->cards[HAND_SIZE - 1] == 12) && (p->cards[0] != 0))) p->straight = false;
-*/
 
 	// fill frequency
 	for(int i = 0; i < HAND_SIZE; ++i) ++p->freq[p->cards[i]];
@@ -228,4 +198,14 @@ int compare(PLAYER *b, PLAYER *w){
 	}
 
 	return 0;
+}
+
+void fill_by_rev_freq(int freq[NUM_CARDS], vector<int> *score){
+
+	for(int j = 1; j <= HAND_SIZE; ++j) // frequency
+		for(int k = 0; k < NUM_CARDS; ++k) // freq vector
+			if(freq[k] == j) score->push_back(k);
+	// more robust way that *currently* fails tests
+	//while(freq[k]) { score->push_back(k); --freq[k]; }
+	return;
 }
