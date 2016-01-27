@@ -16,11 +16,6 @@ int main(){
 /* test specifications */
 void test(){
 
-	w[0] = "lag";
-	w[1] = "log";
-
-	//assert(step(0, 1));
-
 	assert(true);
 	return;
 }
